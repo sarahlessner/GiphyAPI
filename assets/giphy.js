@@ -1,6 +1,6 @@
 //create an array to store my dog breeds
-var topics = ["labrador", "golden retriever", "german shepherd", "irish setter", "samoyed", "rottweiler", 
-			"golden doodle", "bernese mountain dog", "border collie", "english bulldog"];
+var topics = ["labrador", "golden retriever", "german shepherd", "shiba inu", "samoyed", "rottweiler", 
+			"goldendoodle", "bernese mountain dog", "border collie", "husky", "newfoundland"];
 
 //create variable and store result of users "puppy-input" (from HTML form)
 
@@ -28,48 +28,67 @@ function renderButtons() {
         };
 };
 
-renderButtons();
-
 //function for all buttons that will display gifs and relevant info to HTML
 function displayPuppies(){
 
 	//use AJAX to access specific breed button being clicked
 	var breed = $(this).attr("data-name");
-    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + breed + "+puppy&limit=10&sort=relevant&api_key=dc6zaTOxFJmzC";
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + breed + "&limit=10&sort=relevant&api_key=dc6zaTOxFJmzC";
 
     $.ajax({
       url: queryURL,
       method: "GET"
     }).done(function(response) {
     	//div to hold the breed being pulled
-    	var breedDiv = $("<div class='breed'>");
+    	var breedDiv = $("<div class='breedImages'>");
     	
 		//display gif rating for each of the 10 gifs being pulled for the breed
 		for (var j = 0; j < response.data.length; j++) {
 
+			var still = response.data[j].images.original_still.url;
+			var gif = response.data[j].images.original.url;
+			var displayImg = $("<img>");
+			displayImg.attr("src", still);
+			displayImg.attr("data-still", still);
+			displayImg.attr("data-gif", gif);
+			breedDiv.append(displayImg);
+
 			var rating = response.data[j].rating;
+			rating = rating.toUpperCase();
 			var displayRating = $("<p>").text("Rating: " + rating);
 			breedDiv.append(displayRating);
 
-			var still = response.data[j].images.fixed_height_still.url;
-			var displayStill = $("<img>").attr("src", still);
-			breedDiv.append(displayStill);
-
 			$("#puppies").prepend(breedDiv);
-		};
-		
-		
-		
-	});
 
+			//onclick function = 
+			displayImg.on("click", function(){
+				var currentSource = this.getAttribute("src");
+				var stillUrl = this.getAttribute("data-still");
+				var gifUrl = this.getAttribute("data-gif");
+
+				if (currentSource === stillUrl)
+					$(this).attr("src", gifUrl);   // change the src to data-gif
+				else
+					$(this).attr("src", stillUrl); // change the src to data-still	
+
+			});	
+		};
+	});
 };	
+
+	$("#add-puppy").on("click", function(event) {
+        
+        event.preventDefault();
+       
+        var puppy = $("#puppy-input").val();
+        topics.push(puppy);
+
+        renderButtons();
+	});
 
 	//onclick for displayPuppies
 	$(document).on("click", ".breed", displayPuppies);
 
-    // Calling the renderButtons function to display the intial buttons
  	renderButtons();
 
-
-//on click to make gif animation start/stop
 
