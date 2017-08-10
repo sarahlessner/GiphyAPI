@@ -62,9 +62,9 @@ function displayPuppies(){
 
 			//onclick function = 
 			displayImg.on("click", function(){
-				var currentSource = this.getAttribute("src");
-				var stillUrl = this.getAttribute("data-still");
-				var gifUrl = this.getAttribute("data-gif");
+				var currentSource = $(this).attr("src");
+				var stillUrl = $(this).attr("data-still");
+				var gifUrl = $(this).attr("data-gif");
 
 				if (currentSource === stillUrl)
 					$(this).attr("src", gifUrl);   // change the src to data-gif
